@@ -130,7 +130,7 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
     {
         perror("fork failed");
         va_end(args);
-        return false;
+        exit(EXIT_FAILURE);
     }
 
     if (pid == 0)
