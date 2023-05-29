@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Script outline to install and build kernel.
 # Author: Siddhant Jajoo.
 
@@ -28,14 +28,15 @@ if [ ! -d "${OUTDIR}/linux-stable" ]; then
     #Clone only if the repository does not exist.
 	mkdir -p "${OUTDIR}/linux-stable"
 	echo "CLONING GIT LINUX STABLE VERSION ${KERNEL_VERSION} IN ${OUTDIR}"
-        cp -r /home/ubuntu/Desktop/linux-5.1.10/* "${OUTDIR}/linux-stable"
+        git clone ${KERNEL_REPO} --depth 1 --single-branch --branch ${KERNEL_VERSION}
+#        cp -r /home/ubuntu/Desktop/linux-5.1.10/* "${OUTDIR}/linux-stable"
 
 fi
 if [ ! -e ${OUTDIR}/linux-stable/arch/${ARCH}/boot/Image ]; then
     cd linux-stable
     echo "Checking out version ${KERNEL_VERSION}"
     sed -i '/YYLTYPE yylloc/d' scripts/dtc/dtc-lexer.l
-#    git checkout ${KERNEL_VERSION}
+    git checkout ${KERNEL_VERSION}
     echo "Checking out"
     # TODO: Add your kernel build steps here
     make ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE mrproper
