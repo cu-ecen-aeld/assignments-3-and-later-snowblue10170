@@ -26,13 +26,16 @@ mkdir -p ${OUTDIR}
 cd "$OUTDIR"
 if [ ! -d "${OUTDIR}/linux-stable" ]; then
     #Clone only if the repository does not exist.
+	mkdir -p "${OUTDIR}/linux-stable"
 	echo "CLONING GIT LINUX STABLE VERSION ${KERNEL_VERSION} IN ${OUTDIR}"
-	git clone ${KERNEL_REPO} --depth 1 --single-branch --branch ${KERNEL_VERSION}
+        cp -r /home/ubuntu/Desktop/linux-5.1.10/* "${OUTDIR}/linux-stable"
+
 fi
 if [ ! -e ${OUTDIR}/linux-stable/arch/${ARCH}/boot/Image ]; then
     cd linux-stable
     echo "Checking out version ${KERNEL_VERSION}"
-    git checkout ${KERNEL_VERSION}
+    sed -i '/YYLTYPE yylloc/d' scripts/dtc/dtc-lexer.l
+#    git checkout ${KERNEL_VERSION}
     echo "Checking out"
     # TODO: Add your kernel build steps here
     make ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE mrproper
@@ -41,7 +44,7 @@ if [ ! -e ${OUTDIR}/linux-stable/arch/${ARCH}/boot/Image ]; then
 fi
 
 echo "Adding the Image in outdir"
-
+cp ${OUTDIR}/linux-stable/arch/${ARCH}/boot/Image ${OUTDIR}
 echo "Creating the staging directory for the root filesystem"
 cd "$OUTDIR"
 if [ -d "${OUTDIR}/rootfs" ]
