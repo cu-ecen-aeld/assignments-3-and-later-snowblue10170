@@ -71,25 +71,14 @@ void start_server() {
         }
 
         int valread;
-while ((valread = recv(client_fd, buffer, 1024, 0)) > 0) {
-
-    for (int i = 0; i < valread; i++)
-            {
-                if (buffer[i] == '\n')
-                {
-                    fputs("\n", file);
-                }
-                else
-                {
-                    fputc(buffer[i], file);
-                }
-            }
-            if (valread < sizeof(buffer))
-                break;
-}
-if (valread < 0) {
-    syslog(LOG_ERR, "recv failed");
-}
+    while ((valread = recv(client_fd, buffer, sizeof(buffer), 0)) > 0) {
+        fwrite(buffer, sizeof(char), valread, file);
+        if (valread < sizeof(buffer))
+            break;
+    }
+    if (valread < 0) {
+        syslog(LOG_ERR, "recv failed");
+    }
 fseek(file, 0, SEEK_END);
         long file_size = ftell(file);
         fseek(file, 0, SEEK_SET);
@@ -150,5 +139,3 @@ int main(int argc, char const *argv[]) {
 
     return 0;
 }
-
-
